@@ -22,18 +22,15 @@ namespace Prueba_MVC.Controllers
             return View();
         }
 
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
+ 
 
-            return View();
-        }
 
+        //Acctión para cargar los datos del archivo csv al arbol
         [HttpPost]
-        public ActionResult Flow(HttpPostedFileBase postedFile)
+        public ActionResult Carga(HttpPostedFileBase postedFile)
         {
       
-            string filePath = string.Empty;
+            string directarchivo = string.Empty;
             if(postedFile != null)
             {
                 string path = Server.MapPath("~/Cargas/");
@@ -41,33 +38,44 @@ namespace Prueba_MVC.Controllers
                 {
                     Directory.CreateDirectory(path);
                 }
-                filePath = path + Path.GetFileName(postedFile.FileName);
-                string extension = Path.GetExtension(postedFile.FileName);
-                postedFile.SaveAs(filePath);
+                directarchivo = path + Path.GetFileName(postedFile.FileName);
+                postedFile.SaveAs(directarchivo);
+                Caja_arbol.Instance.direccion_archivo_arbol = directarchivo;
             }
-            using (var filestream = new FileStream(filePath, FileMode.Open))
+            using (var archivo = new FileStream(directarchivo, FileMode.Open))
             {
 
-                using (var streamReader = new StreamReader(filestream))
+                using (var archivolec = new StreamReader(archivo))
                 {
-                    string lector = streamReader.ReadLine();
-                          lector = streamReader.ReadLine();
+                    string lector = archivolec.ReadLine();
+                    int posicion = lector.Length + 2;
+
+                    lector = archivolec.ReadLine();
+
                     while (lector != null)
                     {
-                        int pos = int.Parse(filestream.Position.ToString());
+                        int pos = int.Parse(archivo.Position.ToString());
                         string[] cajatext = lector.Split(Convert.ToChar(","));
                         mFarmaco nuevo = new mFarmaco();
                         nuevo.Nombre = cajatext[1];
-                        string delsimb = cajatext[(cajatext.Length - 2)];
-                        var precio_simb = "";
-                        for(int i=1; i<delsimb.Length;i++)
-                        {
-                            precio_simb += delsimb[i];
-                        }
-                        nuevo.Precio = double.Parse(precio_simb);
-                        nuevo.Linea = pos;
-                        Caja_arbol.Instance.arbolFarm.Agregar(nuevo, mFarmaco.ComparName);
-                         lector = streamReader.ReadLine();
+                        int dispo= int.Parse(cajatext[(cajatext.Length - 1)]);
+                        /* string delsimb = cajatext[(cajatext.Length - 2)];
+                          var precio_simb = "";
+                          for(int i=1; i<delsimb.Length;i++)
+                          {
+                              precio_simb += delsimb[i];
+                          }
+                          nuevo.Precio = double.Parse(precio_simb);*/
+                        //                          nuevo.Linea = pos;
+                                 nuevo.Linea = posicion;
+
+                        posicion += lector.Length + 2;
+                        if (dispo > 0)
+                         {
+                             Caja_arbol.Instance.arbolFarm.Agregar(nuevo, mFarmaco.ComparName);
+
+                         }
+                         lector = archivolec.ReadLine();
                     }
 
                 }

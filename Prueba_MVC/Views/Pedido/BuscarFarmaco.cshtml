@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Prueba_MVC.Models.mFarmaco>
+
+@{
+    ViewBag.Title = "Buscar Farmaco";
+
+}
+
+<h2>Buscar Farmaco</h2>
+<div>
+    @using (Html.BeginForm("Busqueda", "Pedido"))
+    {
+        <label>Nombre</label>
+        <input type="text" name="Texto" />
+        <button type="submit">Buscar</button>
+    }
+</div>
+
+<table class="table">
+    <tr>
+        <th>  Nombre </th>
+        <th>  Descripción </th>
+        <th>  Productora </th>
+        <th>  Precio </th>
+        <th>  Existencia </th>
+        <th> Acción</th>
+    </tr>
+
+
+    <tr>
+        <th>  @ViewBag.Nombre </th>
+        <th>  @ViewBag.Descripción </th>
+        <th>  @ViewBag.Productora </th>
+        <th>  @ViewBag.Precio </th>
+        <th>  @ViewBag.Existencia </th>
+        <td>
+            @Html.ActionLink("Agregar", "Edit", new { /* id=item.PrimaryKey */ }) |
+
+            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+        </td>
+    </tr>
+
+
+</table>

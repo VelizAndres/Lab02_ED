@@ -10,8 +10,7 @@ namespace Prueba_MVC.Herramientas.Interfaz
     interface IArbol <T>
     {
         void Agregar(T valor, Delegate comparar);
-        void Recorrer(Nodo<T> dad, Nodo<T> nuevo, Delegate Comparar);
         void Eliminar();
-        void Buscar();
+       T Buscar(T valor, Delegate comparar);
     }
 }

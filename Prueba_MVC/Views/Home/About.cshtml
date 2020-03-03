@@ -4,9 +4,10 @@
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
 <div>
-    @using (Html.BeginForm("Flow", "Home", FormMethod.Post, new {enctype ="multipart/form-data"}))
+    @using (Html.BeginForm("Carga", "Home", FormMethod.Post, new {enctype ="multipart/form-data"}))
     {
         <input type="file" name="postedFile" />
          <input type="submit"  value="Importar" />
     }
 </div>
+

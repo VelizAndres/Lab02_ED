@@ -20,6 +20,6 @@ namespace Prueba_MVC.Herramientas.Almacen
         }
 
         public BiArbol<mFarmaco> arbolFarm = new BiArbol<mFarmaco>();
-
+        public string direccion_archivo_arbol;
     }
 }

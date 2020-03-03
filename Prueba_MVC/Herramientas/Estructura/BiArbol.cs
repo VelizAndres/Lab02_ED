@@ -28,7 +28,7 @@ namespace Prueba_MVC.Herramientas.Estructura
                     }
                     else
                     {
-                        Recorrer(raiz.Hijoder, Nuevo, comparar);   
+                        Recorrer_Asig(raiz.Hijoder, Nuevo, comparar);   
                     }
                 }
                 //hijo izquierdo
@@ -40,31 +40,45 @@ namespace Prueba_MVC.Herramientas.Estructura
                     }
                     else
                     {
-                        Recorrer(raiz.Hijoizq, Nuevo, comparar);
+                        Recorrer_Asig(raiz.Hijoizq, Nuevo, comparar);
                     }
                 }
             }
         }
-
-        public Nodo<T> move(Nodo<T> Padre, Nodo<T>  NodoAux, Delegate Comparacion)
+        public T Buscar(T valor, Delegate comparar)
         {
-            if ((int)Comparacion.DynamicInvoke(Padre.Valor, NodoAux.Valor) < 1) { }
-            else { }
-
-            return NodoAux;
+            Nodo<T> nodoBuscado = new Nodo<T>();
+            nodoBuscado.Valor = valor;
+            if (raiz == null)
+            {
+                return valor;
+            }
+            else
+            {
+                int resulcompar = (int)comparar.DynamicInvoke(raiz.Valor, nodoBuscado.Valor);
+                if (resulcompar == 0)
+                {
+                    return raiz.Valor;
+                }
+                //hijo derecho
+                if (resulcompar < 0)
+                {
+                      return  Recorrer_Busqueda(raiz.Hijoder, nodoBuscado, comparar).Valor;
+                    
+                }
+                //hijo izquierdo
+               else
+                {
+                       return Recorrer_Busqueda(raiz.Hijoizq, nodoBuscado, comparar).Valor;
+                }
+            }
         }
-
-        public void Buscar()
-        {
-            throw new NotImplementedException();
-        }
-
         public void Eliminar()
         {
             throw new NotImplementedException();
         }
 
-        public void Recorrer(Nodo<T> dad, Nodo<T> nuevo, Delegate Comparar)
+        public void Recorrer_Asig(Nodo<T> dad, Nodo<T> nuevo, Delegate Comparar)
         {
             if ((int)Comparar.DynamicInvoke(dad.Valor,nuevo.Valor)<0)
             {
@@ -75,7 +89,7 @@ namespace Prueba_MVC.Herramientas.Estructura
                 else
                 {
                     //se debe buscar un valor vacio(recursividad)
-                    Recorrer(dad.Hijoder, nuevo, Comparar);
+                    Recorrer_Asig(dad.Hijoder, nuevo, Comparar);
                 }
             }
             else
@@ -87,8 +101,26 @@ namespace Prueba_MVC.Herramientas.Estructura
                 else
                 {
                     //se debe buscar un valor vacio(recursividad)
-                    Recorrer(dad.Hijoizq, nuevo, Comparar);
+                    Recorrer_Asig(dad.Hijoizq, nuevo, Comparar);
                 }
+            }
+        }
+        public Nodo<T> Recorrer_Busqueda(Nodo<T> dad, Nodo<T> buscado, Delegate Comparar)
+        {
+            int resulcompar=(int)Comparar.DynamicInvoke(dad.Valor, buscado.Valor);
+            if (resulcompar == 0)
+            {
+                return dad;
+            }
+            if (resulcompar < 0)
+            {
+                //se debe buscar un valor vacio(recursividad)
+                return Recorrer_Busqueda(dad.Hijoder, buscado, Comparar);
+            }
+            else
+            {
+                //se debe buscar un valor vacio(recursividad)
+                return Recorrer_Busqueda(dad.Hijoizq, buscado, Comparar);
             }
         }
     }
