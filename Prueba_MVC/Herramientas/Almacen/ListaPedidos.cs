@@ -18,6 +18,6 @@ namespace Prueba_MVC.Herramientas.Almacen
             }
         }
 
-        public LinkedList<mPedido> arbolFarm = new LinkedList<mPedido>();
+        public LinkedList<mPedido> pedidos_del_dia = new LinkedList<mPedido>();
     }
 }

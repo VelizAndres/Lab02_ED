@@ -14,14 +14,17 @@ namespace Prueba_MVC.Models
         public string Nombre { get => nombre; set => nombre = value; }
         public int Linea { get => linea; set => linea = value; }
 
- 
+
 
         public static Comparison<mFarmaco> ComparName = delegate (mFarmaco medic1, mFarmaco medic2)
         {
             return medic1.nombre.CompareTo(medic2.nombre);
         };
 
+        
+         
 
+        
 
     }
 }

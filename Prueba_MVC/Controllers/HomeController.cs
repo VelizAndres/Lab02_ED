@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Prueba_MVC.Herramientas.Almacen;
 using Prueba_MVC.Models;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Prueba_MVC.Controllers
 {
@@ -16,14 +17,17 @@ namespace Prueba_MVC.Controllers
             return View();
         }
 
-        public ActionResult About()
+        public ActionResult CargaArch()
         {
-            ViewBag.Message = "Elección de archivo.";
+            ViewBag.Message = "Elección de archivo";
             return View();
         }
 
- 
-
+        public ActionResult Recarga()
+        {
+            mCompraFarmaco farmaco = new mCompraFarmaco();
+            return View(farmaco);
+        }
 
         //Acctión para cargar los datos del archivo csv al arbol
         [HttpPost]
@@ -42,6 +46,45 @@ namespace Prueba_MVC.Controllers
                 postedFile.SaveAs(directarchivo);
                 Caja_arbol.Instance.direccion_archivo_arbol = directarchivo;
             }
+            //Modificación de los digitos de la exitencia
+            List<string[]> texto = new List<string[]>();
+            using (var archivo = new FileStream(directarchivo, FileMode.Open))
+            {
+                using (var archivolec = new StreamReader(archivo))
+                {
+                    string lector = archivolec.ReadLine();
+                    while (lector != null)
+                    {
+                        Regex regx = new Regex("," + "(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                        string[] infor_separada = regx.Split(lector);
+                        if (infor_separada[infor_separada.Length - 1].Length < 2)
+                        {
+                            infor_separada[infor_separada.Length - 1] = "0" + infor_separada[infor_separada.Length - 1];
+                        }
+                        lector = archivolec.ReadLine();
+                        texto.Add(infor_separada);
+                    }
+
+                }
+            }
+            using (var archivo = new FileStream(directarchivo, FileMode.Open))
+            {
+                using (var escritor = new StreamWriter(archivo))
+                {
+                    for (int j = 0; j < texto.Count; j++)
+                    {
+                        string texual = texto[j].ToString();
+                        string[] contenedor = texto[j];
+                        string textocompleto = contenedor[0];
+                        for (int ax = 1; ax < contenedor.Length; ax++)
+                        {
+                            textocompleto += "," + contenedor[ax];
+                        }
+                        escritor.WriteLine(textocompleto);
+                    }
+                }
+            }
+            //Carga de datos al arbol
             using (var archivo = new FileStream(directarchivo, FileMode.Open))
             {
 
@@ -51,7 +94,6 @@ namespace Prueba_MVC.Controllers
                     int posicion = lector.Length + 2;
 
                     lector = archivolec.ReadLine();
-
                     while (lector != null)
                     {
                         int pos = int.Parse(archivo.Position.ToString());
@@ -59,15 +101,7 @@ namespace Prueba_MVC.Controllers
                         mFarmaco nuevo = new mFarmaco();
                         nuevo.Nombre = cajatext[1];
                         int dispo= int.Parse(cajatext[(cajatext.Length - 1)]);
-                        /* string delsimb = cajatext[(cajatext.Length - 2)];
-                          var precio_simb = "";
-                          for(int i=1; i<delsimb.Length;i++)
-                          {
-                              precio_simb += delsimb[i];
-                          }
-                          nuevo.Precio = double.Parse(precio_simb);*/
-                        //                          nuevo.Linea = pos;
-                                 nuevo.Linea = posicion;
+                        nuevo.Linea = posicion;
 
                         posicion += lector.Length +2;
                         if (dispo > 0)
@@ -84,5 +118,9 @@ namespace Prueba_MVC.Controllers
 
             return View("Index");
         }
+
+     
+
+
     }
 }

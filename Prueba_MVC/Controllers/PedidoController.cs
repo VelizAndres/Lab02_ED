@@ -18,19 +18,33 @@ namespace Prueba_MVC.Controllers
             mPedido comprador = new mPedido();
             comprador.Pedidos = CarritoCompra.Instance.carrito;
             ViewBag.TotalCompra= CarritoCompra.Instance.total;
-            return View(comprador.Pedidos);
+            return View(comprador);
         }
+
+        public ActionResult VentasHoy()
+        {
+            return View(ListaPedidos.Instance.pedidos_del_dia);
+        }
+
         public ActionResult BuscarFarmaco()
         {
-          
-            return View(CarritoCompra.Instance.carrito);
+            try
+            {
+                CarritoCompra.Instance.carrito = null;
+                return View(CarritoCompra.Instance.carrito);
+            }
+            catch
+            {
+                return View("CargaArch","Home");
+            }
         }
 
 
 
         public ActionResult Busqueda(string Texto)
         {
-            try { mFarmaco farmaco = new mFarmaco();
+            try {
+                mFarmaco farmaco = new mFarmaco();
                 farmaco.Nombre = Texto;
                 farmaco = Caja_arbol.Instance.arbolFarm.Buscar(farmaco, mFarmaco.ComparName);
                 int linea_buscad = farmaco.Linea;
@@ -60,28 +74,30 @@ namespace Prueba_MVC.Controllers
             }
             catch
             {
+                if (CarritoCompra.Instance.total < 0)
+                {
+                    CarritoCompra.Instance.total = 0;
+                }
+                ViewBag.TotalCompra = CarritoCompra.Instance.total;
                 return View("BuscarFarmaco", CarritoCompra.Instance.carrito); 
             }
        }
 
-        // GET: Pedido/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Pedido/Create
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Venta(FormCollection collection)
         {
             try
             {
-                // TODO: Add insert logic here
-
-
-
-
-                return RedirectToAction("Index");
+                var Pedido = new mPedido
+                {
+                    Name = collection["Name"],
+                    Direccion = collection["Direccion"],
+                    Nit = collection["Nit"],
+                    Total = CarritoCompra.Instance.total,
+                    Pedidos = CarritoCompra.Instance.carrito
+                };
+               ListaPedidos.Instance.pedidos_del_dia.AddFirst(Pedido);
+            return View("VentasHoy",ListaPedidos.Instance.pedidos_del_dia);
             }
             catch
             {
@@ -89,62 +105,85 @@ namespace Prueba_MVC.Controllers
             }
         }
 
-        // GET: Pedido/Edit/5
         public ActionResult Agregar(string cantidad)
         {
-            mFarmaco farmaco = new mFarmaco();
-            farmaco.Nombre = CarritoCompra.Instance.quizascompra;
-            farmaco = Caja_arbol.Instance.arbolFarm.Buscar(farmaco, mFarmaco.ComparName);
-            int linea_buscad = farmaco.Linea;
-            string info_farmaco = "";
-            using (FileStream archivo = new FileStream(Caja_arbol.Instance.direccion_archivo_arbol, FileMode.Open))
-            {
-                using (StreamReader lector = new StreamReader(archivo))
+            try {
+                mFarmaco farmaco = new mFarmaco();
+                farmaco.Nombre = CarritoCompra.Instance.quizascompra;
+                farmaco = Caja_arbol.Instance.arbolFarm.Buscar(farmaco, mFarmaco.ComparName);
+                int linea_buscad = farmaco.Linea;
+                string info_farmaco = "";
+                using (FileStream archivo = new FileStream(Caja_arbol.Instance.direccion_archivo_arbol, FileMode.Open))
                 {
-                    archivo.Seek(linea_buscad, SeekOrigin.Begin);
-                    info_farmaco = lector.ReadLine();
+                    using (StreamReader lector = new StreamReader(archivo))
+                    {
+                        archivo.Seek(linea_buscad, SeekOrigin.Begin);
+                        info_farmaco = lector.ReadLine();
+                        linea_buscad += info_farmaco.Length;
+                    }
                 }
-            }
-            Regex regx = new Regex("," + "(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
-            string[] infor_separada = regx.Split(info_farmaco);
+                Regex regx = new Regex("," + "(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                string[] infor_separada = regx.Split(info_farmaco);
+                if (int.Parse(cantidad) <= int.Parse(infor_separada[infor_separada.Length - 1]))
+                {
+                    mCompraFarmaco FarmacoNuevo = new mCompraFarmaco();
+                    FarmacoNuevo.Nombre = infor_separada[1];
+                    string delsimb = infor_separada[4];
+                    var precio_simb = "";
+                    for (int i = 1; i < delsimb.Length; i++)
+                    {
+                        precio_simb += delsimb[i];
+                    }
+                    FarmacoNuevo.Precio_uni = double.Parse(precio_simb);
+                    FarmacoNuevo.Cantidad = int.Parse(cantidad);
+                    FarmacoNuevo.Subtotal = FarmacoNuevo.Precio_uni * int.Parse(cantidad);
+                    CarritoCompra.Instance.carrito.AddFirst(FarmacoNuevo);
+                    CarritoCompra.Instance.total += FarmacoNuevo.Subtotal;
 
-            mCompraFarmaco FarmacoNuevo = new mCompraFarmaco();
-            FarmacoNuevo.Nombre = infor_separada[1];
-            string delsimb = infor_separada[4];
-            var precio_simb = "";
-            for (int i = 1; i < delsimb.Length; i++)
-            {
-                precio_simb += delsimb[i];
-            }
-            FarmacoNuevo.Precio_uni = double.Parse(precio_simb);
-            FarmacoNuevo.Cantidad = int.Parse(cantidad);
-            FarmacoNuevo.Subtotal = FarmacoNuevo.Precio_uni* int.Parse(cantidad);
-            CarritoCompra.Instance.carrito.AddFirst(FarmacoNuevo);
-            CarritoCompra.Instance.total += FarmacoNuevo.Subtotal;
-            if (CarritoCompra.Instance.total < 0)
-            {
-                CarritoCompra.Instance.total = 0;
-            }
-            ViewBag.TotalCompra = CarritoCompra.Instance.total;
-            return View("BuscarFarmaco", CarritoCompra.Instance.carrito);
-        }
 
-        // POST: Pedido/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
 
-                return RedirectToAction("Index");
+
+
+
+
+                    //Se procede a la eliminación de producto comprado en la exitencia
+                    using (var archivo = new FileStream(Caja_arbol.Instance.direccion_archivo_arbol, FileMode.Open))
+                    {
+                        using (var escritor = new StreamWriter(archivo))
+                        {
+                            int posicion_existencia = linea_buscad - infor_separada[infor_separada.Length - 1].Length;
+                            archivo.Seek(posicion_existencia, SeekOrigin.Begin);
+                            string existencia_actual = Convert.ToString(int.Parse(infor_separada[infor_separada.Length - 1]) - int.Parse(cantidad));
+                            if (existencia_actual.Length < 2)
+                            {
+                                existencia_actual = "0" + existencia_actual;
+                            }
+                            escritor.WriteLine(existencia_actual);
+                        }
+                    }
+                }
+                if (CarritoCompra.Instance.total < 0)
+                {
+                    CarritoCompra.Instance.total = 0;
+                }
+                ViewBag.TotalCompra = CarritoCompra.Instance.total;
+
+                return View("BuscarFarmaco", CarritoCompra.Instance.carrito);
             }
+            
             catch
             {
-                return View();
+                if (CarritoCompra.Instance.total < 0)
+                {
+                    CarritoCompra.Instance.total = 0;
+                }
+                ViewBag.TotalCompra = CarritoCompra.Instance.total;
+
+                return View("BuscarFarmaco", CarritoCompra.Instance.carrito);
             }
-        }
-        // GET: Pedido/Delete/5
+         }
+
+
         public ActionResult Delete(string id)
         {
             try
@@ -157,12 +196,47 @@ namespace Prueba_MVC.Controllers
                         farmaco = item;
                     }
                 }
+                 
+                mFarmaco drug = new mFarmaco();
+                drug.Nombre = id;
+                drug = Caja_arbol.Instance.arbolFarm.Buscar(drug, mFarmaco.ComparName);
+                int linea_buscad = drug.Linea;
+                string info_farmaco = "";
+                using (FileStream archivo = new FileStream(Caja_arbol.Instance.direccion_archivo_arbol, FileMode.Open))
+                {
+                    using (StreamReader lector = new StreamReader(archivo))
+                    {
+                        archivo.Seek(linea_buscad, SeekOrigin.Begin);
+                        info_farmaco = lector.ReadLine();
+                        linea_buscad += info_farmaco.Length;
+                    }
+                }
+                Regex regx = new Regex("," + "(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                string[] infor_separada = regx.Split(info_farmaco);
+
+                //Se procede a la agregacion del producto regresado a la exitencia
+                using (var archivo = new FileStream(Caja_arbol.Instance.direccion_archivo_arbol, FileMode.Open))
+                {
+                    using (var escritor = new StreamWriter(archivo))
+                    {
+                        int posicion_existencia = linea_buscad - infor_separada[infor_separada.Length - 1].Length;
+                        archivo.Seek(posicion_existencia, SeekOrigin.Begin);
+                        string existencia_actual = Convert.ToString(int.Parse(infor_separada[infor_separada.Length - 1]) + farmaco.Cantidad);
+                        if (existencia_actual.Length < 2)
+                        {
+                            existencia_actual = "0" + existencia_actual;
+                        }
+                        escritor.WriteLine(existencia_actual);
+                    }
+                }
+
                 CarritoCompra.Instance.carrito.Remove(farmaco);
                 CarritoCompra.Instance.total = CarritoCompra.Instance.total - farmaco.Subtotal;
                 if (CarritoCompra.Instance.total < 0)
                 {
                     CarritoCompra.Instance.total = 0;
                 }
+
                 ViewBag.TotalCompra = CarritoCompra.Instance.total;
                 return View("BuscarFarmaco", CarritoCompra.Instance.carrito);
             }
