@@ -21,7 +21,10 @@ namespace Prueba_MVC.Models
             return medic1.nombre.CompareTo(medic2.nombre);
         };
 
-        
+        public static Func<mFarmaco, string> ObtenerNombre = delegate (mFarmaco farm)
+          {
+              return farm.Nombre;
+          };
          
 
         

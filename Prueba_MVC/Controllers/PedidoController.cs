@@ -30,7 +30,7 @@ namespace Prueba_MVC.Controllers
         {
             try
             {
-                CarritoCompra.Instance.carrito = null;
+                CarritoCompra.Instance.carrito.Clear();
                 return View(CarritoCompra.Instance.carrito);
             }
             catch

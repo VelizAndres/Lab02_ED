@@ -23,6 +23,69 @@ namespace Prueba_MVC.Controllers
             return View();
         }
 
+        public ActionResult Exportacion()
+        {
+            return View();
+        }
+
+        public ActionResult Export_Inorder()
+        {
+            string impresion = Caja_arbol.Instance.arbolFarm.ExportarInorder(mFarmaco.ObtenerNombre);
+            string direc_arch = "";
+            string Path = Server.MapPath("~/Orden_Expor");
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            direc_arch = Path + "Inorder_exp.txt";
+            System.IO.File.Create(direc_arch).Close();
+            using (StreamWriter escritor = new StreamWriter(direc_arch,false))
+            {
+                escritor.Write(impresion);
+            }
+            ViewBag.Mensaje = "Exportacion Inorder Exitosa";
+            return View("Exportacion");
+        }
+        public ActionResult Export_Preorder()
+        {
+            string impresion = Caja_arbol.Instance.arbolFarm.ExportarPreorder(mFarmaco.ObtenerNombre);
+            string direc_arch = "";
+            string Path = Server.MapPath("~/Orden_Expor");
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            direc_arch = Path + "Preorder_exp.txt";
+            System.IO.File.Create(direc_arch).Close();
+            using (StreamWriter escritor = new StreamWriter(direc_arch, false))
+            {
+                escritor.Write(impresion);
+            }
+            ViewBag.Mensaje = "Exportacion Preorder Exitosa";
+            return View("Exportacion");
+
+        }
+        public ActionResult Export_Postorder()
+        {
+            string impresion = Caja_arbol.Instance.arbolFarm.ExportarPostorder(mFarmaco.ObtenerNombre);
+            string direc_arch = "";
+            string Path = Server.MapPath("~/Orden_Expor");
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+            direc_arch = Path + "Postorder_exp.txt";
+            System.IO.File.Create(direc_arch).Close();
+            using (StreamWriter escritor = new StreamWriter(direc_arch, false))
+            {
+                escritor.Write(impresion);
+            }
+            ViewBag.Mensaje = "Exportacion Postorder Exitosa";
+            return View("Exportacion");
+        }
+
+
+
         public ActionResult Recarga()
         {
             mCompraFarmaco farmaco = new mCompraFarmaco();

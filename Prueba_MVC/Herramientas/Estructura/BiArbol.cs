@@ -121,113 +121,214 @@ namespace Prueba_MVC.Herramientas.Estructura
             }
         }
 
-        //public void Eliminar()
-        //{
-        //    throw new NotImplementedException();
-
-
-        //}
+       public void Eliminar()
+       {
+        throw new NotImplementedException();
+       }
         // ELIMINAR
         // nIzquierdo -> hijo izquierdo
         //nDerecho -> hijo derecho 
         //Nodo_Arbol -> nodo
-        public   Nodo<T> Eliminar(int info, ref Nodo_Arbol t) // t -> raiz 
+        /*      public   Nodo<T> Eliminar(T valor, Delegate Compare)/*t->raiz*/
+        /*   {
+               Nodo<T> delete = new Nodo<T>();
+               delete.Valor = valor;
+               if (raiz != null)
+               {
+                   // Dato menor a la raiz
+                   if ()
+                   {
+                       Eliminar(valor, Compare);
+                   }
+                   else
+                   {
+                       // Dato mayor a la raiz
+                       if (info > t.dato)
+                       {
+                           Eliminar(info, ref t.nDerecho);
+                       }
+                       else
+                       {
+                           Nodo_Arbol NodoELiminar = t; //Nodo ubicado para eliminar
+
+                           if (NodoELiminar.nDerecho == null) //Confirmar que tenga hijo derecho
+                           {
+                               t = NodoELiminar.nIzquierdo;
+                           }
+                           else
+                           {
+                               if (NodoELiminar.nIzquierdo == null)//Se verifica si tiene hijo izquierdo
+                               {
+                                   t = NodoELiminar.nDerecho;
+                               }
+                               else
+                               {
+                                   if (Alturas(t.nIzquierdo) - Alturas(t.nDerecho) > 0)
+                                   // Verifica que el hijo pasa a ser la nueva raiz del subarbol
+                                   {
+                                       Nodo_Arbol NodoAux = null;
+                                       Nodo_Arbol Auxiliar = t.nDerecho;
+                                       bool bandera = false;
+
+                                       //Cambio de valores
+                                       while (Auxiliar.nIzquierdo != null)
+                                       {
+                                           NodoAux = Auxiliar;
+                                           Auxiliar = Auxiliar.nIzquierdo;
+                                           bandera = true; //Sale hasta cambiar
+                                       }
+
+                                       t.dato = Auxiliar.dato; //Nodo temporal
+                                       NodoELiminar = Auxiliar;
+
+                                       if (bandera == true)
+                                       {
+                                           NodoAux.nIzquierdo = Auxiliar.nDerecho;
+                                       }
+                                       else
+                                       {
+                                           t.nDerecho = Auxiliar.nDerecho;
+                                       }
+                                   }
+                                   else
+                                   {
+                                       if (Alturas(t.nDerecho) - Alturas(t.nIzquierdo) == 0)
+                                       {
+                                           Nodo_Arbol NodoAux = null;
+                                           Nodo_Arbol Auxiliar = t.nIzquierdo;
+                                           bool bandera = false;
+
+                                           while (Auxiliar.nDerecho != null)
+                                           {
+                                               NodoAux = Auxiliar;
+                                               Auxiliar = Auxiliar.nDerecho;
+                                               bandera = true;
+                                           }
+
+                                           t.dato = Auxiliar.dato;
+                                           NodoELiminar = Auxiliar;
+
+                                           if (bandera == true)
+                                           {
+                                               NodoAux.nDerecho = Auxiliar.nIzquierdo;
+                                           }
+                                           else
+                                           {
+                                               t.nIzquierdo = Auxiliar.nIzquierdo;
+                                           }
+                                       }
+                                   }
+                               }
+                           }
+                       }
+                   }
+
+               }
+               else
+               {
+                   //EL NODO NO EXISTE EN EL ARBOL
+               }
+           }
+    */
+        public string texto_impresion = "";
+        public string ExportarInorder(Delegate ob_nom)
         {
-            if (t != null)
+            texto_impresion ="";
+            try
             {
-                // Dato menor a la raiz
-                if (info < t.dato)
+                if(raiz.Valor!=null)
                 {
-                    Eliminar(info, ref t.nIzquierdo);
+                    Inorder(raiz, ob_nom);   
                 }
                 else
                 {
-                    // Dato mayor a la raiz
-                    if (info > t.dato)
-                    {
-                        Eliminar(info, ref t.nDerecho);
-                    }
-                    else
-                    {
-                        Nodo_Arbol NodoELiminar = t; //Nodo ubicado para eliminar
-
-                        if (NodoELiminar.nDerecho == null) //Confirmar que tenga hijo derecho
-                        {
-                            t = NodoELiminar.nIzquierdo;
-                        }
-                        else
-                        {
-                            if (NodoELiminar.nIzquierdo == null)//Se verifica si tiene hijo izquierdo
-                            {
-                                t = NodoELiminar.nDerecho;
-                            }
-                            else
-                            {
-                                if (Alturas(t.nIzquierdo) - Alturas(t.nDerecho) > 0)
-                                // Verifica que el hijo pasa a ser la nueva raiz del subarbol
-                                {
-                                    Nodo_Arbol NodoAux = null;
-                                    Nodo_Arbol Auxiliar = t.nDerecho;
-                                    bool bandera = false;
-
-                                    //Cambio de valores
-                                    while (Auxiliar.nIzquierdo != null)
-                                    {
-                                        NodoAux = Auxiliar;
-                                        Auxiliar = Auxiliar.nIzquierdo;
-                                        bandera = true; //Sale hasta cambiar
-                                    }
-
-                                    t.dato = Auxiliar.dato; //Nodo temporal
-                                    NodoELiminar = Auxiliar;
-
-                                    if (bandera == true)
-                                    {
-                                        NodoAux.nIzquierdo = Auxiliar.nDerecho;
-                                    }
-                                    else
-                                    {
-                                        t.nDerecho = Auxiliar.nDerecho;
-                                    }
-                                }
-                                else
-                                {
-                                    if (Alturas(t.nDerecho) - Alturas(t.nIzquierdo) == 0)
-                                    {
-                                        Nodo_Arbol NodoAux = null;
-                                        Nodo_Arbol Auxiliar = t.nIzquierdo;
-                                        bool bandera = false;
-
-                                        while (Auxiliar.nDerecho != null)
-                                        {
-                                            NodoAux = Auxiliar;
-                                            Auxiliar = Auxiliar.nDerecho;
-                                            bandera = true;
-                                        }
-
-                                        t.dato = Auxiliar.dato;
-                                        NodoELiminar = Auxiliar;
-
-                                        if (bandera == true)
-                                        {
-                                            NodoAux.nDerecho = Auxiliar.nIzquierdo;
-                                        }
-                                        else
-                                        {
-                                            t.nIzquierdo = Auxiliar.nIzquierdo;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    return "Arbol Vacio";
                 }
-
+                return texto_impresion;
             }
-            else
-            {
-                //EL NODO NO EXISTE EN EL ARBOL
+            catch {
+            return "Arbol Vacio";
             }
         }
+        private void Inorder(Nodo<T> nodo_obt, Delegate ob_nom)
+        {
+            if(nodo_obt.Hijoizq!=null)
+            {
+                Inorder(nodo_obt.Hijoizq,ob_nom);
+            }
+            texto_impresion += (string)ob_nom.DynamicInvoke(nodo_obt.Valor) + Environment.NewLine;
+            if(nodo_obt.Hijoder!=null)
+            {
+                Inorder(nodo_obt.Hijoder, ob_nom);
+            }
+
+        }
+        ///
+        public string ExportarPreorder(Delegate ob_nom)
+        {
+            texto_impresion = "";
+            try
+            {
+                if (raiz.Valor != null)
+                {
+                    Preorder(raiz, ob_nom);
+                }
+                else
+                {
+                    return "Arbol Vacio";
+                }
+                return texto_impresion;
+            }
+            catch
+            {
+                return "Arbol Vacio";
+            }
+        }
+        private void Preorder(Nodo<T> nodo_obt, Delegate ob_nom)
+        {
+            texto_impresion += (string)ob_nom.DynamicInvoke(nodo_obt.Valor) + Environment.NewLine;
+            if (nodo_obt.Hijoizq != null)
+            {
+                Preorder(nodo_obt.Hijoizq, ob_nom);
+            }
+            if (nodo_obt.Hijoder != null)
+            {
+                Preorder(nodo_obt.Hijoder, ob_nom);
+            }
+        }
+        ///
+        public string ExportarPostorder(Delegate ob_nom)
+        {
+            texto_impresion = "";
+            try
+            {
+                if (raiz.Valor != null)
+                {
+                    Postorder(raiz, ob_nom);
+                }
+                else
+                {
+                    return "Arbol Vacio";
+                }
+                return texto_impresion;
+            }
+            catch
+            {
+                return "Arbol Vacio";
+            }
+        }
+        private void Postorder(Nodo<T> nodo_obt, Delegate ob_nom)
+        {
+            if (nodo_obt.Hijoizq != null)
+            {
+                Postorder(nodo_obt.Hijoizq, ob_nom);
+            }
+            if (nodo_obt.Hijoder != null)
+            {
+                Postorder(nodo_obt.Hijoder, ob_nom);
+            }
+            texto_impresion += (string)ob_nom.DynamicInvoke(nodo_obt.Valor) + Environment.NewLine;
+        }
+
     }
 }
