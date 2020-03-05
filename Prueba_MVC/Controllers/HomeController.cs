@@ -32,7 +32,7 @@ namespace Prueba_MVC.Controllers
         {
             string impresion = Caja_arbol.Instance.arbolFarm.ExportarInorder(mFarmaco.ObtenerNombre);
             string direc_arch = "";
-            string Path = Server.MapPath("~/Orden_Expor");
+            string Path = Server.MapPath("~/Orden_Expor/");
             if (!Directory.Exists(Path))
             {
                 Directory.CreateDirectory(Path);
@@ -44,13 +44,14 @@ namespace Prueba_MVC.Controllers
                 escritor.Write(impresion);
             }
             ViewBag.Mensaje = "Exportacion Inorder Exitosa";
+            ViewBag.Infor = impresion;
             return View("Exportacion");
         }
         public ActionResult Export_Preorder()
         {
             string impresion = Caja_arbol.Instance.arbolFarm.ExportarPreorder(mFarmaco.ObtenerNombre);
             string direc_arch = "";
-            string Path = Server.MapPath("~/Orden_Expor");
+            string Path = Server.MapPath("~/Orden_Expor/");
             if (!Directory.Exists(Path))
             {
                 Directory.CreateDirectory(Path);
@@ -62,6 +63,7 @@ namespace Prueba_MVC.Controllers
                 escritor.Write(impresion);
             }
             ViewBag.Mensaje = "Exportacion Preorder Exitosa";
+            ViewBag.Infor = impresion;
             return View("Exportacion");
 
         }
@@ -69,7 +71,7 @@ namespace Prueba_MVC.Controllers
         {
             string impresion = Caja_arbol.Instance.arbolFarm.ExportarPostorder(mFarmaco.ObtenerNombre);
             string direc_arch = "";
-            string Path = Server.MapPath("~/Orden_Expor");
+            string Path = Server.MapPath("~/Orden_Expor/");
             if (!Directory.Exists(Path))
             {
                 Directory.CreateDirectory(Path);
@@ -81,6 +83,7 @@ namespace Prueba_MVC.Controllers
                 escritor.Write(impresion);
             }
             ViewBag.Mensaje = "Exportacion Postorder Exitosa";
+            ViewBag.Infor = impresion;
             return View("Exportacion");
         }
 
